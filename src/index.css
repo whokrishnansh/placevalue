@@ -1448,3 +1448,295 @@ button {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg), 0 0 20px rgba(139, 92, 246, 0.3);
 }
+
+/* ==========================================
+   TUTORIAL OVERLAY
+   ========================================== */
+
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.tutorial-overlay > * {
+  pointer-events: auto;
+}
+
+/* ---- Spotlight Cutout ----
+   A transparent element with a massive box-shadow creates the
+   dark overlay everywhere EXCEPT over the highlighted section.
+   The focused area appears crystal clear; everything else is dimmed. */
+
+.tutorial-spotlight-cutout {
+  position: fixed;
+  z-index: 1001;
+  border-radius: var(--radius-xl);
+  /* massive box-shadow acts as the dark overlay around the hole */
+  box-shadow: 0 0 0 9999px rgba(10, 10, 30, 0.78);
+  pointer-events: none;
+  transition: top 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              left 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  /* collapsed to center by default (welcome step) */
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 2px solid transparent;
+}
+
+.tutorial-spotlight-cutout.active {
+  border-color: rgba(139, 92, 246, 0.55);
+  animation: spotlight-border-pulse 2s ease-in-out infinite;
+}
+
+@keyframes spotlight-border-pulse {
+  0%, 100% { border-color: rgba(139, 92, 246, 0.55); }
+  50% { border-color: rgba(139, 92, 246, 0.9); }
+}
+
+/* ---- Animated Pointer ---- */
+.tutorial-pointer {
+  position: fixed;
+  z-index: 1010;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+  pointer-events: none;
+  will-change: transform;
+}
+
+.tutorial-pointer svg {
+  width: 40px;
+  height: 40px;
+}
+
+/* Pointer: gentle wave for welcome (CSS positioned, no inline override) */
+.pointer-wave {
+  top: 42%;
+  left: 50%;
+  animation: pointer-wave-anim 2.4s ease-in-out infinite;
+}
+
+@keyframes pointer-wave-anim {
+  0%, 100% { transform: translate(-50%, 0) rotate(-8deg); }
+  30% { transform: translate(-40%, -16px) rotate(6deg); }
+  60% { transform: translate(-60%, 8px) rotate(-12deg); }
+}
+
+/* Pointer: click/tap (inline positioned via JS) */
+.pointer-click {
+  animation: pointer-click-anim 2.2s ease-in-out infinite;
+}
+
+@keyframes pointer-click-anim {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(6px, 10px) scale(1); }
+  40% { transform: translate(6px, 10px) scale(0.82); }
+  50% { transform: translate(6px, 10px) scale(1.02); }
+  65% { transform: translate(6px, 10px) scale(0.82); }
+  75% { transform: translate(6px, 10px) scale(1); }
+}
+
+/* Pointer: drag motion (inline positioned via JS) */
+.pointer-drag {
+  animation: pointer-drag-anim 3.4s ease-in-out infinite;
+}
+
+@keyframes pointer-drag-anim {
+  0% { transform: translate(0, 0) scale(1); }
+  12% { transform: translate(0, 8px) scale(0.86); }
+  55% { transform: translate(220px, -15px) scale(0.86); }
+  68% { transform: translate(220px, -15px) scale(1.02); }
+  82% { transform: translate(220px, -15px) scale(1); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+/* Click ripple on pointer tip */
+.pointer-ripple {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(139, 92, 246, 0.7);
+  animation: ripple-expand 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes ripple-expand {
+  0%, 20% { transform: scale(0); opacity: 0; }
+  35% { transform: scale(1); opacity: 0.8; }
+  55% { transform: scale(2.8); opacity: 0; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+/* ---- Tutorial Card ---- */
+.tutorial-card {
+  position: relative;
+  z-index: 1020;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-2xl);
+  padding: 36px 40px 30px;
+  max-width: 520px;
+  width: 90%;
+  text-align: center;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.3),
+    0 0 80px rgba(139, 92, 246, 0.12);
+  margin-top: 30vh;
+}
+
+/* top bar removed for cleaner look */
+
+/* Progress dots */
+.tutorial-progress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.tutorial-progress-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gray-300);
+  transition: all 0.3s ease;
+}
+
+.tutorial-progress-dot.active {
+  background: var(--purple-500);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  transform: scale(1.25);
+}
+
+.tutorial-progress-dot.completed {
+  background: var(--green-500);
+}
+
+.tutorial-step-number {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--gray-400);
+  margin-bottom: 8px;
+}
+
+.tutorial-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--purple-600), var(--blue-600));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.tutorial-description {
+  font-size: 0.95rem;
+  color: var(--gray-600);
+  line-height: 1.7;
+  margin-bottom: 28px;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tutorial-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.tutorial-skip-btn {
+  padding: 10px 22px;
+  border-radius: var(--radius-full);
+  background: var(--gray-100);
+  color: var(--gray-500);
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 1px solid var(--gray-200);
+  transition: all var(--transition-fast);
+}
+
+.tutorial-skip-btn:hover {
+  background: var(--gray-200);
+  color: var(--gray-700);
+  transform: translateY(-1px);
+}
+
+.tutorial-next-btn {
+  padding: 10px 28px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--purple-500), var(--blue-500));
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.tutorial-next-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(139, 92, 246, 0.45);
+}
+
+.tutorial-key-hint {
+  font-size: 0.7rem;
+  color: var(--gray-400);
+}
+
+.tutorial-key-hint kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  margin: 0 2px;
+}
+
+/* ---- Dark Mode Tutorial ---- */
+[data-theme="dark"] .tutorial-spotlight-cutout {
+  box-shadow: 0 0 0 9999px rgba(5, 5, 15, 0.85);
+}
+
+[data-theme="dark"] .tutorial-card {
+  background: rgba(30, 34, 53, 0.97);
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 80px rgba(139, 92, 246, 0.08);
+}
+
+[data-theme="dark"] .tutorial-skip-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--gray-500);
+}
+
+[data-theme="dark"] .tutorial-skip-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--gray-400);
+}
+
+[data-theme="dark"] .tutorial-key-hint kbd {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--gray-500);
+}

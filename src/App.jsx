@@ -14,6 +14,7 @@ import Machine from "./Machine";
 import OutputColumn from "./OutputColumn";
 import SuccessModal from "./SuccessModal";
 import FinalRecapModal from "./FinalRecapModal";
+import Tutorial from "./Tutorial";
 import Confetti from "./Confetti";
 import { useSoundEffects } from "./useSoundEffects";
 import {
@@ -39,6 +40,7 @@ export default function App() {
   const [showHint, setShowHint] = useState(true);
   const [completedLevels, setCompletedLevels] = useState(new Set());
   const [darkMode, setDarkMode] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(true);
 
   // Dark mode toggle
   const toggleDarkMode = useCallback(() => {
@@ -270,6 +272,14 @@ export default function App() {
   if (target === null) return null;
 
   return (
+    <>
+    {/* Tutorial Overlay */}
+    <AnimatePresence>
+      {showTutorial && (
+        <Tutorial onComplete={() => setShowTutorial(false)} />
+      )}
+    </AnimatePresence>
+
     <DndContext
       sensors={sensors}
       onDragStart={handleDragStart}
@@ -442,5 +452,6 @@ export default function App() {
         <Confetti active={confettiActive} />
       </div>
     </DndContext>
+    </>
   );
 }
